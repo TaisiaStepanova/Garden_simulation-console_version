@@ -4,7 +4,7 @@ import random
 
 
 class Garden:                                 # Класс садовый участок
-    __TREE = ['apple', 'peer']
+    __TREE = ['apple', 'pear']
     __HERBS = ['potato', 'tomato', 'pepper']
     __Weather = ['rain', 'sun', 'hurricane']
 
@@ -197,7 +197,11 @@ class Garden:                                 # Класс садовый уча
             if bed.check_herb():
                 tmp_herb = bed.get_herb()
                 if self.__weather == 'rain':
-                    tmp_herb.set_water_level(tmp_herb.water_level() + 25)
+                    tmp_water = tmp_herb.water_level() + 25
+                    if tmp_water > 100:
+                        tmp_herb.set_water_level(100)
+                    else:
+                        tmp_herb.set_water_level(tmp_herb.water_level() + 25)
                 elif self.__weather == 'sun':
                     tmp_herb.set_water_level(tmp_herb.water_level() - 25)
                 elif self.__weather == 'hurricane':

@@ -1,51 +1,87 @@
 from library import*
 import json
+import click
+from click_shell import shell
 
-garden = Garden()
-garden.get_data_from_file()
 
-
-def menu() -> None:
-    print("Вечера")
+@shell(prompt='Garden > ', intro='Starting simulation...')
+def main():
+    global garden
+    garden = Garden()
+    garden.get_data_from_file()
+    click.echo("Вечера")
     garden.show()
     garden.next_day()
-    print("Сегодня")
-    command = ['add_bed', 'plant_tree', 'plant_cult', 'watering', 'fertilize', 'kill_pest', 'treatment', 'weeding', 'harvesting', 'exit']
-    while True:
-        garden.show()
-        choice = str(input())
-        choice = choice.strip()
-        if choice == command[0]:
-            garden.add_garden_bed()
-        elif choice.startswith(command[1], 0, -1):
-            tmp = choice.split(" ", 1)
-            garden.plant_tree(tmp[1])
-        elif choice.startswith(command[2], 0, -1):
-            tmp = choice.split(" ", 2)
-            garden.plant_cultivated_plant(tmp[1], int(tmp[2]) - 1)
-        elif choice.startswith(command[3], 0, -1):
-            tmp = choice.split(" ", 1)
-            garden.watering(int(tmp[1]) - 1)
-        elif choice.startswith(command[4], 0, -1):
-            tmp = choice.split(" ", 1)
-            garden.fertilize(int(tmp[1]) - 1)
-        elif choice.startswith(command[5], 0, -1):
-            tmp = choice.split(" ", 2)
-            garden.kill_pest(tmp[1], int(tmp[2]) - 1)
-        elif choice.startswith(command[6], 0, -1):
-            tmp = choice.split(" ", 2)
-            garden.treatment(tmp[1], int(tmp[2]) - 1)
-        elif choice.startswith(command[7], 0, -1):
-            tmp = choice.split(" ", 1)
-            garden.weeding(int(tmp[1]) - 1)
-        elif choice.startswith(command[8], 0, -1):
-            tmp = choice.split(" ", 2)
-            garden.harvesting(tmp[1], int(tmp[2]) - 1)
-        elif choice == command[9]:
-            return
-        else:
-            print('WRONG INPUT!')
-        garden.set_data_in_file()
+    garden.set_data_in_file()
+    click.echo("Сегодня")
+    garden.show()
+
+@main.command()
+def add_bed():
+    garden.add_garden_bed()
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Plant tree: apple or pear')
+@click.argument('type')
+def plant_tree(type):
+    garden.plant_tree(type)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Plant cultivated plant (tomato, potato or pepper) in garden bed №...')
+@click.argument('type')
+@click.argument('count')
+def plant_cult(type, count):
+    garden.plant_cultivated_plant(type, int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Watering cultivated plant in garden bed №...')
+@click.argument('count')
+def watering(count):
+    garden.watering(int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Fertilize cultivated plant in garden bed №...')
+@click.argument('count')
+def fertilize(count):
+    garden.fertilize(int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Kill pest on plant (cult or tree) in garden bed №... or on tree №...')
+@click.argument('type')
+@click.argument('count')
+def kill_pest(type, count):
+    garden.kill_pest(type, int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Treatment on plant (cult or tree) in garden bed №... or on tree №...')
+@click.argument('type')
+@click.argument('count')
+def treatment(type, count):
+    garden.treatment(type, int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Weeding cultivated plant in garden bed №...')
+@click.argument('count')
+def weeding(count):
+    garden.weeding(int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
+
+@main.command(help = 'Harvesting on plant (cult or tree) in garden bed №... or on tree №...')
+@click.argument('type')
+@click.argument('count')
+def harvesting(type, count):
+    garden.harvesting(type, int(count) - 1)
+    garden.set_data_in_file()
+    garden.show()
 
 
-menu()
+if __name__ == '__main__':
+    main()
